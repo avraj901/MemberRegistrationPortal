@@ -1,24 +1,14 @@
 package com.registration.modal;
 
-import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
-import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
 @Entity
-@Table(name = "member")
-public class Member implements Serializable {
+public class Customer {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -32,22 +22,14 @@ public class Member implements Serializable {
 	private String country;
 	private String state;
 	private String memberId;
-
-	public List<MemberDependents> getMemberDependents() {
-		return memberDependents;
-	}
-
-	@OneToMany(targetEntity = MemberDependents.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "memberid_fk", referencedColumnName = "id")
-	private List<MemberDependents> memberDependents;
-
-	public Member() {
+	
+	public Customer() {
 		super();
+		
 	}
 
-
-	public Member(Integer id, String name, String emailAddress, String panNumber, String contactNumber, Date dob,
-			String address, String country, String state, String memberId, List<MemberDependents> memberDependents) {
+	public Customer(Integer id, String name, String emailAddress, String panNumber, String contactNumber, Date dob,
+			String address, String country, String state, String memberId) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -58,21 +40,6 @@ public class Member implements Serializable {
 		this.address = address;
 		this.country = country;
 		this.state = state;
-		this.memberId = memberId;
-		this.memberDependents = memberDependents;
-	}
-
-
-	public void setMemberDependents(List<MemberDependents> memberDependents) {
-		this.memberDependents = memberDependents;
-	}
-
-
-	public String getMemberId() {
-		return memberId;
-	}
-
-	public void setMemberId(String memberId) {
 		this.memberId = memberId;
 	}
 
@@ -148,4 +115,14 @@ public class Member implements Serializable {
 		this.state = state;
 	}
 
+	public String getMemberId() {
+		return memberId;
+	}
+
+	public void setMemberId(String memberId) {
+		this.memberId = memberId;
+	}
+	
+	
+	
 }
