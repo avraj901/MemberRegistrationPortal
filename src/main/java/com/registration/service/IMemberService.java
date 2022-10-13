@@ -9,7 +9,7 @@ import com.registration.modal.Member;
 
 public interface IMemberService {
 
-	String saveMember(Member author);
+	String saveMember(Member member);
 	
 	public List<Member> getAllMember();
 	
