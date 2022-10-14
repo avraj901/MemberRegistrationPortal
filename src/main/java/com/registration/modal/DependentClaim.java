@@ -19,14 +19,16 @@ public class DependentClaim {
 	private String providerName;
 	private Double totalBillAmount;
 	private String memberId;
+	private long claimNumber;
 	
 	public DependentClaim() {
 		super();
 		
 	}
 
+
 	public DependentClaim(Integer id, String memberName, Date dateOfAdmission, Date dateOfDischarge,
-			String providerName, Double totalBillAmount, String memberId) {
+			String providerName, Double totalBillAmount, String memberId, long claimNumber) {
 		super();
 		this.id = id;
 		this.memberName = memberName;
@@ -35,7 +37,19 @@ public class DependentClaim {
 		this.providerName = providerName;
 		this.totalBillAmount = totalBillAmount;
 		this.memberId = memberId;
+		this.claimNumber = claimNumber;
 	}
+
+
+	public long getClaimNumber() {
+		return claimNumber;
+	}
+
+
+	public void setClaimNumber(long claimNumber) {
+		this.claimNumber = claimNumber;
+	}
+
 
 	public Integer getId() {
 		return id;

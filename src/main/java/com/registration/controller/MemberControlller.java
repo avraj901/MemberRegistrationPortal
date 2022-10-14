@@ -89,4 +89,9 @@ public class MemberControlller {
 	public Optional<Dependents> getDependentsById(@PathVariable Integer id) {
 		return memberService.getDependentsById(id);
 	}
+	
+	@PutMapping("/updatedependets/{id}")
+	public ResponseEntity<Dependents> updateDependents(@PathVariable("id") Integer id, @RequestBody Dependents dependents) {
+		return new ResponseEntity<Dependents>(memberService.updateDependents(dependents, id), HttpStatus.OK);
+	}
 }

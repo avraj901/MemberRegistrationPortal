@@ -152,7 +152,7 @@ public class MemberServiceImpl implements IMemberService {
 		existingCustomer.setName(customer.getName());
 		existingCustomer.setEmailAddress(customer.getEmailAddress());
 		existingCustomer.setPanNumber(customer.getPanNumber());
-		existingCustomer.setContactNumber(customer.getPanNumber());
+		existingCustomer.setContactNumber(customer.getContactNumber());
 		existingCustomer.setDob(customer.getDob());
 		existingCustomer.setAddress(customer.getAddress());
 		existingCustomer.setCountry(customer.getCountry());
@@ -172,4 +172,17 @@ public class MemberServiceImpl implements IMemberService {
 		return dependentRepository.findById(id);
 	}
 
+	@Override
+	public Dependents updateDependents(Dependents dependents, Integer id) {
+		Dependents existingDependent = dependentRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Dependent", "id", id));
+		existingDependent.setName(dependents.getName());
+		existingDependent.setDob(dependents.getDob());
+		existingDependent.setMemberId(dependents.getMemberId());
+		existingDependent.setCount(dependents.getCount());
+		dependentRepository.save(existingDependent);
+		return existingDependent;
+	}
+
+	
 }

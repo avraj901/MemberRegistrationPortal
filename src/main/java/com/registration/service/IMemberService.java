@@ -32,4 +32,6 @@ public interface IMemberService {
 	public List<Dependents> getDependentsByMemberId(String memberId);
 	
 	Optional<Dependents> getDependentsById(Integer id);
+	
+	Dependents updateDependents(Dependents dependents, Integer id);
 }
