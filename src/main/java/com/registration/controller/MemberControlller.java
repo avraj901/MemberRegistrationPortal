@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.registration.modal.Customer;
 import com.registration.modal.Dependents;
 import com.registration.modal.Member;
+import com.registration.modal.Response;
 import com.registration.service.IMemberService;
 
 @RestController
@@ -57,19 +58,9 @@ public class MemberControlller {
 		return new ResponseEntity<Member>(memberService.updateMember(member, id), HttpStatus.OK);
 	}
 
-	@PostMapping("/savedependent")
-	public String saveDependents(@RequestBody Dependents dependents) {
-		return memberService.saveDepents(dependents);
-	}
-
 	@GetMapping("/getcustomer/{id}")
 	public Optional<Customer> getCustomer(@PathVariable String id) {
 		return memberService.getCustomerByMemberId(id);
-	}
-
-	@PostMapping("/savecustomer")
-	public String saveCustomer(@RequestBody Customer customer) {
-		return memberService.saveCustomer(customer);
 	}
 
 	@GetMapping("findcustomer/{id}")
@@ -77,21 +68,44 @@ public class MemberControlller {
 		return memberService.getCustomerById(id);
 	}
 
+	@GetMapping("/getAllcustomers")
+	public List<Customer> getAllCustomers() {
+		return memberService.getAllCustomer();
+	}
+
+	@PostMapping("/savecustomer")
+	public ResponseEntity<Response> saveCustomer(@RequestBody Customer customer) {
+		return memberService.saveCustomer(customer);
+	}
+
 	@PutMapping("/updatecustomer/{id}")
 	public ResponseEntity<Customer> updateCustomer(@PathVariable("id") Integer id, @RequestBody Customer customer) {
 		return new ResponseEntity<Customer>(memberService.updateCustomer(customer, id), HttpStatus.OK);
 	}
+
+	@PostMapping("/savedependent")
+	public ResponseEntity<Response> saveDependents(@RequestBody Dependents dependents) {
+		return memberService.saveDepents(dependents);
+	}
+
 	@GetMapping("/getdependents/{id}")
 	public List<Dependents> getDependents(@PathVariable String id) {
 		return memberService.getDependentsByMemberId(id);
 	}
+
 	@GetMapping("/findependents/{id}")
 	public Optional<Dependents> getDependentsById(@PathVariable Integer id) {
 		return memberService.getDependentsById(id);
 	}
-	
+
+	@GetMapping("/getalldependents")
+	public List<Dependents> getAllDependents() {
+		return memberService.getAllDependents();
+	}
+
 	@PutMapping("/updatedependets/{id}")
-	public ResponseEntity<Dependents> updateDependents(@PathVariable("id") Integer id, @RequestBody Dependents dependents) {
+	public ResponseEntity<Dependents> updateDependents(@PathVariable("id") Integer id,
+			@RequestBody Dependents dependents) {
 		return new ResponseEntity<Dependents>(memberService.updateDependents(dependents, id), HttpStatus.OK);
 	}
 }

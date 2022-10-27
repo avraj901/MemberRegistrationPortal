@@ -1,7 +1,11 @@
 package com.registration.utility;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Period;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Date;
 
 public class MemberUtility {
 
@@ -17,12 +21,16 @@ public class MemberUtility {
 		return memberId;
 	}
 
-	public static int ageCalculation(LocalDate dob) {
+	public static int ageCalculation(Date dob) {
+		Instant instant = dob.toInstant();
+		ZonedDateTime zonedDateTime = instant.atZone(ZoneId.systemDefault());
+		LocalDate dateOfBirth = zonedDateTime.toLocalDate();
 		LocalDate currentDate = LocalDate.now();
 		if ((dob != null) && (currentDate != null)) {
-			return Period.between(dob, currentDate).getYears();
+			return Period.between(dateOfBirth, currentDate).getYears();
 		} else {
 			return 0;
 		}
 	}
+
 }

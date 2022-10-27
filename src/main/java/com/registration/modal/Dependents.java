@@ -65,6 +65,13 @@ public class Dependents {
 	public void setMemberId(String memberId) {
 		this.memberId = memberId;
 	}
+
+
+	@Override
+	public String toString() {
+		return "Dependents [id=" + id + ", name=" + name + ", count=" + count + ", dob=" + dob + ", memberId="
+				+ memberId + "]";
+	}
 	
 	
 }

@@ -3,9 +3,12 @@ package com.registration.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.http.ResponseEntity;
+
 import com.registration.modal.Customer;
 import com.registration.modal.Dependents;
 import com.registration.modal.Member;
+import com.registration.modal.Response;
 
 public interface IMemberService {
 
@@ -19,9 +22,9 @@ public interface IMemberService {
 	
 	Member updateMember(Member member, Integer id);
 	
-	String saveDepents(Dependents dependents);
+	ResponseEntity<Response> saveDepents(Dependents dependents);
 	
-	String saveCustomer(Customer customer);
+	ResponseEntity<Response> saveCustomer(Customer customer);
 	
 	public Optional<Customer> getCustomerByMemberId(String memberId);
 	
@@ -34,4 +37,8 @@ public interface IMemberService {
 	Optional<Dependents> getDependentsById(Integer id);
 	
 	Dependents updateDependents(Dependents dependents, Integer id);
+	
+	public List<Customer> getAllCustomer();
+	
+	public List<Dependents> getAllDependents();
 }

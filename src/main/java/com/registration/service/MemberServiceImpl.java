@@ -7,16 +7,20 @@ import java.util.Optional;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.registration.exception.ResourceNotFoundException;
+import com.registration.exception.MemberException;
 import com.registration.modal.Customer;
 import com.registration.modal.Dependents;
 import com.registration.modal.Member;
 import com.registration.modal.MemberDependents;
+import com.registration.modal.Response;
 import com.registration.repository.ICustomerRepository;
 import com.registration.repository.IDependentRepository;
 import com.registration.repository.IMemberRepository;
+import com.registration.utility.MemberUtility;
 
 @Service
 public class MemberServiceImpl implements IMemberService {
@@ -36,7 +40,8 @@ public class MemberServiceImpl implements IMemberService {
 		Optional<Member> oldMember = null;
 		Member saveMember = memberRepository.save(member);
 		int id = saveMember.getId();
-		int registrationNumber = random.nextInt(1000);
+		// Generates random integers 0 to 999
+		int registrationNumber = random.nextInt(999) + 100;
 		String memberId = "R-" + registrationNumber;
 		// First we need to get memberId if exit then generate new member id
 		oldMember = getMemberByMemberId(memberId);
@@ -45,7 +50,7 @@ public class MemberServiceImpl implements IMemberService {
 			String oldMemberId = oldMember.get().getMemberId();
 			System.out.println("oldMember Id ::" + oldMemberId + "new Member Id ::" + memberId);
 			if (oldMemberId.equalsIgnoreCase(memberId)) {
-				registrationNumber = random.nextInt(1000);
+				registrationNumber = random.nextInt(999) + 100;
 				memberId = "R-" + registrationNumber;
 				memberRepository.updateMemberId(memberId, id);
 			}
@@ -75,7 +80,7 @@ public class MemberServiceImpl implements IMemberService {
 	public Member updateMember(Member member, Integer id) {
 		List<MemberDependents> listDependents = new ArrayList<>();
 		Member existingMember = memberRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("Member", "id", id));
+				.orElseThrow(() -> new MemberException("Member", "id", id));
 		existingMember.setName(member.getName());
 		existingMember.setEmailAddress(member.getEmailAddress());
 		existingMember.setPanNumber(member.getPanNumber());
@@ -104,35 +109,61 @@ public class MemberServiceImpl implements IMemberService {
 	}
 
 	@Override
-	public String saveDepents(Dependents dependents) {
+	public ResponseEntity<Response> saveDepents(Dependents dependents) {
+		String memberId = dependents.getMemberId();
+		Response response = new Response();
+		int count = 0;
+		List<Dependents> saveddependents = getDependentsByMemberId(memberId);
+		if (null != saveddependents) {
+			count = saveddependents.size();
+			System.out.println("saved Dependents count ::" + count);
+		}
+		if (count >= 2) {
+			System.out.println("Exception :::::::You can not add more than 2 dependents");
+			throw new MemberException("You can not add more than 2 dependents");
+		} else {
+			count++;
+			dependents.setCount(count);
+		}
+		System.out.println("Dependents saved successfully");
 		Dependents savedependents = dependentRepository.save(dependents);
-		return savedependents.getMemberId();
+		memberId = savedependents.getMemberId();
+		response.setMemberId(memberId);
+		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 
 	@Override
-	public String saveCustomer(Customer customer) {
+	public ResponseEntity<Response> saveCustomer(Customer customer) {
 		Random random = new Random();
 		Optional<Customer> oldMember = null;
-		Customer saveMember = customerRepository.save(customer);
-		int id = saveMember.getId();
-		int registrationNumber = random.nextInt(1000);
-		String memberId = "R-" + registrationNumber;
-		// First we need to get memberId if exit then generate new member id
-		oldMember = getCustomerByMemberId(memberId);
-		System.out.println("OldMember :: " + oldMember.isPresent());
-		if (oldMember.isPresent()) {
-			String oldMemberId = oldMember.get().getMemberId();
-			System.out.println("oldMember Id ::" + oldMemberId + "new Member Id ::" + memberId);
-			if (oldMemberId.equalsIgnoreCase(memberId)) {
-				registrationNumber = random.nextInt(1000);
-				memberId = "R-" + registrationNumber;
+		Date dob = customer.getDob();
+		int age = MemberUtility.ageCalculation(dob);
+		Response response = new Response();
+		if (age <= 18) {
+			throw new MemberException("Member age should be greater than 18");
+		} else {
+			Customer saveMember = customerRepository.save(customer);
+			int id = saveMember.getId();
+			int registrationNumber = random.nextInt(1000);
+			// String memberId = "R-" + registrationNumber;
+			String memberId = "R-" + MemberUtility.getMemberId();
+			// First we need to get memberId if exit then generate new member id
+			oldMember = getCustomerByMemberId(memberId);
+			System.out.println("OldMember :: " + oldMember.isPresent());
+			if (oldMember.isPresent()) {
+				String oldMemberId = oldMember.get().getMemberId();
+				System.out.println("oldMember Id ::" + oldMemberId + "new Member Id ::" + memberId);
+				if (oldMemberId.equalsIgnoreCase(memberId)) {
+					registrationNumber = random.nextInt(1000);
+					memberId = "R-" + registrationNumber;
+					customerRepository.updateMemberId(memberId, id);
+				}
+			} else {
 				customerRepository.updateMemberId(memberId, id);
 			}
-		} else {
-			customerRepository.updateMemberId(memberId, id);
+			response.setMemberId(memberId);
+			return new ResponseEntity<Response>(response, HttpStatus.OK);
 		}
-
-		return memberId;
 	}
 
 	@Override
@@ -148,7 +179,7 @@ public class MemberServiceImpl implements IMemberService {
 	@Override
 	public Customer updateCustomer(Customer customer, Integer id) {
 		Customer existingCustomer = customerRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("Member", "id", id));
+				.orElseThrow(() -> new MemberException("Member", "id", id));
 		existingCustomer.setName(customer.getName());
 		existingCustomer.setEmailAddress(customer.getEmailAddress());
 		existingCustomer.setPanNumber(customer.getPanNumber());
@@ -175,7 +206,7 @@ public class MemberServiceImpl implements IMemberService {
 	@Override
 	public Dependents updateDependents(Dependents dependents, Integer id) {
 		Dependents existingDependent = dependentRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("Dependent", "id", id));
+				.orElseThrow(() -> new MemberException("Dependent", "id", id));
 		existingDependent.setName(dependents.getName());
 		existingDependent.setDob(dependents.getDob());
 		existingDependent.setMemberId(dependents.getMemberId());
@@ -184,5 +215,14 @@ public class MemberServiceImpl implements IMemberService {
 		return existingDependent;
 	}
 
-	
+	@Override
+	public List<Customer> getAllCustomer() {
+		return customerRepository.findAll();
+	}
+
+	@Override
+	public List<Dependents> getAllDependents() {
+		return dependentRepository.findAll();
+	}
+
 }
