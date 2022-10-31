@@ -144,9 +144,8 @@ public class MemberServiceImpl implements IMemberService {
 		} else {
 			Customer saveMember = customerRepository.save(customer);
 			int id = saveMember.getId();
-			int registrationNumber = random.nextInt(1000);
-			// String memberId = "R-" + registrationNumber;
-			String memberId = "R-" + MemberUtility.getMemberId();
+			int registrationNumber = MemberUtility.getMemberId();
+			String memberId = "R-" + registrationNumber;
 			// First we need to get memberId if exit then generate new member id
 			oldMember = getCustomerByMemberId(memberId);
 			System.out.println("OldMember :: " + oldMember.isPresent());
@@ -154,7 +153,7 @@ public class MemberServiceImpl implements IMemberService {
 				String oldMemberId = oldMember.get().getMemberId();
 				System.out.println("oldMember Id ::" + oldMemberId + "new Member Id ::" + memberId);
 				if (oldMemberId.equalsIgnoreCase(memberId)) {
-					registrationNumber = random.nextInt(1000);
+					registrationNumber =MemberUtility.getMemberId();
 					memberId = "R-" + registrationNumber;
 					customerRepository.updateMemberId(memberId, id);
 				}
