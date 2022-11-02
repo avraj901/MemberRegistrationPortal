@@ -113,6 +113,7 @@ public class MemberServiceImpl implements IMemberService {
 		String memberId = dependents.getMemberId();
 		Response response = new Response();
 		int count = 0;
+		MemberUtility.compareDate(dependents.getDob());
 		List<Dependents> saveddependents = getDependentsByMemberId(memberId);
 		if (null != saveddependents) {
 			count = saveddependents.size();

@@ -6,6 +6,7 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.registration.exception.MemberException;
 import com.registration.modal.DependentClaim;
 import com.registration.repository.IDependentClaimRepository;
 import com.registration.utility.MemberUtility;
@@ -31,6 +32,9 @@ public class DependentClaimServiceImpl implements IDependentClaimService{
 			ClaimService.compareDate(admission, discharge);
 		} catch (ParseException e) {
 			e.printStackTrace();
+		}
+		if(claim.getTotalBillAmount() == 0.0) {
+			throw new MemberException("Please provide the Amount");
 		}
 		long claimNumber = MemberUtility.getClaimNumber();
 		claim.setClaimNumber(claimNumber);
